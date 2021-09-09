@@ -1,33 +1,27 @@
-import { useEffect, useState } from "react";
-import { Item } from "../interfaces/Item";
-import { add, reset } from "../redux/dataSlice";
-import { store } from "../redux/store";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { incrementedAvailableId } from "../features/availableId/availableId-slice";
+import { added, reset } from "../features/texts/texts-slice";
 import { strings } from "../values/Strings";
 import { DataItem } from "./DataItem";
 
 export default function DataLoader() {
 
-    const [data, setData] = useState(store.getState() as Item[]);
-    const [availableId, setAvailableId] = useState(1);
-    
-    useEffect(() => observeData());
-
-    function observeData() {
-        store.subscribe(() => setData(store.getState()));
-    }
+    const texts = useAppSelector((state) => state.texts.value);
+    const availableId = useAppSelector((state) => state.availableId.value);
+    const dispatch = useAppDispatch();
 
     function onAdd() {
-        store.dispatch(add({id: availableId, content: ""}));
-        setAvailableId(availableId + 1);
+        dispatch(added({id: availableId, content: ""}));
+        dispatch(incrementedAvailableId());
     }
 
     function onReset() {
-        store.dispatch(reset());
+        dispatch(reset());
     }
 
     return (
         <div>
-            {data.map(item => <DataItem key={item.id} item={item}/>)}
+            {texts.map(text => <DataItem key={text.id} text={text}/>)}
                 
             <button onClick={() => onAdd()}>{strings.add}</button>
             <button onClick={() => onReset()}>{strings.reset}</button>

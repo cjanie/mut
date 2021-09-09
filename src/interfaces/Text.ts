@@ -1,4 +1,4 @@
-export interface Item {
+export interface Text {
     id: number,
     content: string
 }

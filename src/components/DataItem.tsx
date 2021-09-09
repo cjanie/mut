@@ -1,23 +1,25 @@
 import { useEffect, useState } from "react";
-import { Item } from "../interfaces/Item";
-import { save } from "../redux/dataSlice";
-import { store } from "../redux/store";
+import { useAppDispatch } from "../app/hooks";
+import { saved } from "../features/texts/texts-slice";
+import { Text } from "../interfaces/Text";
 import { strings } from "../values/Strings";
 
 type Props = {
-    item: Item
+    text: Text
 }
 
 export function DataItem(props: Props) {
 
     const [mode, setMode] = useState(null as null | "update" | "read");
     const [buttonText, setButtonText] = useState(strings.update);
-    const [updatedItem, setUpdatedItem] = useState(null as null | Item);
+    const [updatedItem, setUpdatedItem] = useState(null as null | Text);
+
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
-        if(props.item.content === "") setMode("update");
+        if(props.text.content === "") setMode("update");
         mode === "update" ? setButtonText(strings.save) : setButtonText (strings.update);
-    }, [props.item.content, mode]);
+    }, [props.text.content, mode]);
     
 
     function onUpdate() {
@@ -26,7 +28,7 @@ export function DataItem(props: Props) {
 
     function onSave() {
         if(updatedItem !== null) {
-            store.dispatch(save(updatedItem));
+            dispatch(saved(updatedItem));
         }
         setMode("read");
     }
@@ -35,7 +37,7 @@ export function DataItem(props: Props) {
         mode === "read" ? onUpdate() : onSave();
     }
 
-    function getTextView(item: Item) {
+    function getTextView(item: Text) {
         return mode === "read" ? (<p>{item.content}</p>) : (
             <p>
                 <input type="text" id={item.id.toString()} defaultValue={item.content} onChange={() => updateItem()} />
@@ -44,17 +46,17 @@ export function DataItem(props: Props) {
     }
 
     function updateItem() {
-        const content = (document.getElementById(props.item.id.toString()) as HTMLInputElement).value;
+        const content = (document.getElementById(props.text.id.toString()) as HTMLInputElement).value;
         const updated = {
-            id: props.item.id,
+            id: props.text.id,
             content: content
-        } as Item;
+        } as Text;
         setUpdatedItem(updated);
     }
 
     return (
         <div>
-            {getTextView(props.item)} 
+            {getTextView(props.text)} 
             <button onClick={() => onButtonClick()}>{buttonText}</button>
         </div>
     );
