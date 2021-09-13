@@ -1,23 +1,16 @@
-import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { incrementedAvailableId } from "../features/availableId/availableId-slice";
-import { added, reset } from "../features/texts/texts-slice";
+import { useAppSelector } from "../app/hooks";
+import { useOnAddText } from "../usecases/useOnAddText";
+import { useOnResetTexts } from "../usecases/useOnResetTexts";
 import { strings } from "../values/Strings";
 import { DataItem } from "./DataItem";
 
 export default function DataLoader() {
 
     const texts = useAppSelector((state) => state.texts.value);
-    const availableId = useAppSelector((state) => state.availableId.value);
-    const dispatch = useAppDispatch();
+    
+    const onAdd = useOnAddText();
 
-    function onAdd() {
-        dispatch(added({id: availableId, content: ""}));
-        dispatch(incrementedAvailableId());
-    }
-
-    function onReset() {
-        dispatch(reset());
-    }
+    const onReset = useOnResetTexts();
 
     return (
         <div>
@@ -27,5 +20,4 @@ export default function DataLoader() {
             <button onClick={() => onReset()}>{strings.reset}</button>
         </div>
     );
-
 }

@@ -40,13 +40,12 @@ export function DataItem(props: Props) {
     function getTextView(item: Text) {
         return mode === "read" ? (<p>{item.content}</p>) : (
             <p>
-                <input type="text" id={item.id.toString()} defaultValue={item.content} onChange={() => updateItem()} />
+                <input type="text" defaultValue={item.content} onChange={(e) => updateItem(String(e.target.value))} />
             </p>
         );
     }
 
-    function updateItem() {
-        const content = (document.getElementById(props.text.id.toString()) as HTMLInputElement).value;
+    function updateItem(content: string) {
         const updated = {
             id: props.text.id,
             content: content
